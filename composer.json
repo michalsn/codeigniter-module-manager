@@ -1,0 +1,66 @@
+{
+    "name": "michalsn/codeigniter-module-manager",
+    "description": "Module manager package for CodeIgniter 4.",
+    "license": "MIT",
+    "type": "library",
+    "keywords": ["codeigniter", "codeigniter4", "module", "module-manager"],
+    "authors": [
+        {
+            "name": "michalsn",
+            "homepage": "https://github.com/michalsn",
+            "role": "Developer"
+        }
+    ],
+    "homepage": "https://github.com/michalsn/codeigniter-module-manager",
+    "require": {
+        "php": "^8.2"
+    },
+    "require-dev": {
+        "codeigniter4/devkit": "^1.3",
+        "codeigniter4/framework": "^4.6"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "autoload": {
+        "psr-4": {
+            "Michalsn\\CodeIgniterModuleManager\\": "src"
+        },
+        "exclude-from-classmap": [
+            "**/Database/Migrations/**"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests",
+            "Tests\\Support\\Modules\\Posts\\": "tests/_support/modules/posts/src"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "phpstan/extension-installer": true
+        }
+    },
+    "scripts": {
+        "analyze": [
+            "phpstan analyze",
+            "psalm",
+            "rector process --dry-run"
+        ],
+        "sa": "@analyze",
+        "ci": [
+            "Composer\\Config::disableProcessTimeout",
+            "@cs",
+            "@deduplicate",
+            "@inspect",
+            "@analyze",
+            "@test"
+        ],
+        "cs": "php-cs-fixer fix --ansi --verbose --dry-run --diff",
+        "cs-fix": "php-cs-fixer fix --ansi --verbose --diff",
+        "style": "@cs-fix",
+        "deduplicate": "phpcpd src/ tests/",
+        "inspect": "deptrac analyze --cache-file=build/deptrac.cache",
+        "mutate": "infection --threads=2 --skip-initial-tests --coverage=build/phpunit",
+        "test": "phpunit"
+    }
+}
