@@ -36,29 +36,6 @@ abstract class BaseUpdateManifest
     }
 
     /**
-     * Get all migrations between two versions (exclusive of fromVersion, inclusive of toVersion)
-     *
-     * @param string $fromVersion Starting version (excluded)
-     * @param string $toVersion   Ending version (included)
-     *
-     * @return list<string> Array of migration filenames
-     */
-    public function getMigrationsBetween(string $fromVersion, string $toVersion): array
-    {
-        $versions   = array_keys($this->migrations);
-        $migrations = [];
-
-        foreach ($versions as $version) {
-            if (version_compare($version, $fromVersion, '>')
-                && version_compare($version, $toVersion, '<=')) {
-                $migrations = array_merge($migrations, $this->migrations[$version]);
-            }
-        }
-
-        return $migrations;
-    }
-
-    /**
      * Get all defined versions in the manifest
      *
      * @return list<string> Array of version strings
