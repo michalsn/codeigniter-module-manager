@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Michalsn\CodeIgniterModuleManager\Services;
 
 use CodeIgniter\I18n\Time;
+use Config\Autoload;
 use Exception;
 use Michalsn\CodeIgniterModuleManager\Exceptions\ModuleException;
 
@@ -156,50 +157,12 @@ class AutoloadManager
     }
 
     /**
-     * Get currently registered modules from the PSR-4 cache file
-     * Returns array of namespaces found in the generated file
-     */
-    public function getRegisteredModules(): array
-    {
-        if (! $this->autoloadFileExists()) {
-            return [];
-        }
-
-        // Include the file to get the array
-        $psr4Array = include $this->autoloadFilePath;
-
-        if (! is_array($psr4Array)) {
-            return [];
-        }
-
-        $modules = [];
-
-        foreach ($psr4Array as $namespace => $path) {
-            $folderName = basename((string) $path);
-
-            $modules[] = [
-                'namespace' => $namespace,
-                'folder'    => $folderName,
-                'path'      => $path,
-            ];
-        }
-
-        return $modules;
-    }
-
-    /**
      * Check if a specific namespace is registered
      */
     public function isModuleRegistered(string $namespace): bool
     {
-        $registered = $this->getRegisteredModules();
+        $psr4 = config(Autoload::class)->psr4;
 
-        foreach ($registered as $module) {
-            if ($module['namespace'] === $namespace) {
-                return true;
-            }
-        }
-
-        return false;
+        return isset($psr4[$namespace]);
     }
 }
