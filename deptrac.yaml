@@ -113,7 +113,11 @@ deptrac:
       - Vendor Model
     Service:
       - Config
+      - Entity
+      - Model
       - Vendor Config
+      - Vendor Entity
+      - Vendor Model
 
     # Ignore anything in the Vendor layers
     Vendor Model:
