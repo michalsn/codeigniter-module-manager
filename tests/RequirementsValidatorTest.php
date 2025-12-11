@@ -37,7 +37,7 @@ final class RequirementsValidatorTest extends TestCase
 
         $config                      = new ModuleManagerConfig();
         $this->moduleModel           = new ModuleModel();
-        $registry              = new ModuleRegistry($config, $this->moduleModel);
+        $registry                    = new ModuleRegistry($config, $this->moduleModel);
         $this->requirementsValidator = new RequirementsValidator($config, $registry);
 
         // Make private methods accessible for testing
