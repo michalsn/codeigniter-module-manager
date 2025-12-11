@@ -1,6 +1,6 @@
 # CodeIgniter Module Manager
 
-A module is a self-contained package that adds specific functionality to your application. CodeIgniter 4 includes native support for modules, making it easy to organize features into isolated, reusable components.
+A module is a self-contained package that adds a specific feature to your application. CodeIgniter 4 provides native module support, making it easy to organize functionality into isolated, reusable components.
 
 This package provides a structured way to install, manage, and maintain the entire lifecycle of your modules, ensuring they can be added, updated, or removed cleanly and consistently.
 
