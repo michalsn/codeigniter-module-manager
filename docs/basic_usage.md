@@ -9,9 +9,13 @@ A module starts with a specific directory structure. At minimum, you need a Modu
 Start by creating the directory structure in your modules folder:
 
 ```
-modules/blog/
+modules/blog/src/
 └── Module.php
 ```
+
+!!! note
+
+    The ``src`` folder is required and must be present for modules to be detected.
 
 The Module.php file defines your module's identity and configuration:
 
@@ -57,7 +61,7 @@ You'll see your blog module listed with its version and installation status. At 
 Most modules need database tables to store their data. Migrations handle creating and dropping these tables in a reversible way. Create a migrations directory in your module:
 
 ```
-modules/blog/
+modules/blog/src/
 ├── Module.php
 └── Database/
     └── Migrations/
@@ -131,7 +135,7 @@ The command executes the up method in your migration, creates the blog_posts tab
 Before enabling the module, let's add some functionality. Create a controller and routes file:
 
 ```
-modules/blog/
+modules/blog/src/
 ├── Module.php
 ├── Config/
 │   └── Routes.php
