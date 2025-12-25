@@ -31,8 +31,9 @@ Shows detailed information about a specific module. This includes all metadata f
 ```console
 php spark module:info <module_namespace>
 ```
+!!! important
 
-Replace `<module_namespace>` with either the module's folder name (like `blog`) or its namespace (like `Modules\Blog`). The command accepts either format for convenience.
+    Replace `<module_namespace>` with either the module's folder name (like `blog`) or its namespace (like `Modules\Blog`). For convenience, the command supports both formats. This convention is used across all commands.
 
 The detailed output includes the module's name, description, version, author, URL, folder location, namespace, whether it's installed and enabled, the installed version if different from the current version, and whether updates are available.
 
