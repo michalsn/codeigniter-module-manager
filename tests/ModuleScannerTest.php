@@ -29,9 +29,8 @@ final class ModuleScannerTest extends TestCase
     {
         $result = $this->scanner->scanForModules();
 
-        $this->assertArrayHasKey('valid', $result);
-        $this->assertArrayHasKey('invalid', $result);
         $this->assertNotEmpty($result['valid']);
+        $this->assertEmpty($result['invalid']);
     }
 
     public function testScanForModulesFindsValidModule(): void
@@ -286,8 +285,6 @@ final class ModuleScannerTest extends TestCase
 
         $result = $scanner->scanForModules();
 
-        $this->assertArrayHasKey('valid', $result);
-        $this->assertArrayHasKey('invalid', $result);
         $this->assertEmpty($result['valid']);
         $this->assertEmpty($result['invalid']);
     }
