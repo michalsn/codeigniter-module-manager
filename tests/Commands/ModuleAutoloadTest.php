@@ -60,6 +60,6 @@ final class ModuleAutoloadTest extends CLITestCase
         $this->assertFileExists($autoloadPath);
 
         $content = file_get_contents($autoloadPath);
-        $this->assertStringContainsString('Tests\\\\Support\\\\Modules\\\\Posts', $content);
+        $this->assertStringContainsString('Tests\\\\Support\\\\Modules\\\\Posts', (string) $content);
     }
 }
