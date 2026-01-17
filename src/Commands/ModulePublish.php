@@ -103,7 +103,7 @@ class ModulePublish extends BaseCommand
             CLI::write(CLI::color('  Autoload Modified! ', 'green') . 'Constructor added to load enabled modules automatically.');
         } else {
             CLI::error('Could not find the right place to insert constructor in Autoload.php');
-            CLI::write('Please manually add the constructor to app/Config/Autoload.php:', 'yellow');
+            CLI::write('Please manually add the constructor to Config\\Autoload.php class:', 'yellow');
             CLI::write($constructorCode);
         }
     }
