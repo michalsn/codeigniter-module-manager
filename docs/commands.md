@@ -149,3 +149,18 @@ class UpdateManifest extends BaseUpdateManifest
 ```
 
 This manifest ensures that users updating from any older version will have all intermediate migrations run in the correct order, even if they skipped some versions.
+
+## module:autoload
+
+Regenerates the `writable/modules_psr4.php` autoload file based on currently enabled modules. This is a utility command for recovery and synchronization scenarios.
+
+```console
+php spark module:autoload
+```
+
+Under normal operation, you don't need this command. The autoload file is automatically regenerated whenever you enable or disable a module. However, this command is useful when:
+
+- The autoload file was accidentally deleted or corrupted
+- You made direct changes to the database and need to sync the autoload file
+
+The command reads all enabled modules from the database and rebuilds the PSR-4 namespace mappings. If no modules are enabled, the autoload file is deleted since there's nothing to autoload.
