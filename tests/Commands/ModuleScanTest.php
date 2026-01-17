@@ -38,4 +38,27 @@ final class ModuleScanTest extends CLITestCase
 
         $this->assertStringContainsString('posts: OK', $output);
     }
+
+    public function testRunDisplaysInvalidModules(): void
+    {
+        // Create an invalid module (missing src/ folder)
+        $invalidModulePath = TESTPATH . '_support/modules/invalid-test-module';
+        mkdir($invalidModulePath, 0755, true);
+
+        try {
+            CITestStreamFilter::registration();
+            CITestStreamFilter::addOutputFilter();
+
+            command('module:scan');
+            $output = $this->parseOutput(CITestStreamFilter::$buffer);
+
+            CITestStreamFilter::removeOutputFilter();
+
+            $this->assertStringContainsString('invalid modules found', $output);
+            $this->assertStringContainsString('invalid-test-module', $output);
+            $this->assertStringContainsString("must have 'src' folder", $output);
+        } finally {
+            rmdir($invalidModulePath);
+        }
+    }
 }

@@ -23,13 +23,22 @@ class ModuleScanner
     {
     }
 
+    /**
+     * Scan for modules and return both valid and invalid modules
+     *
+     * @return array{valid: array, invalid: array<string, string>}
+     */
     public function scanForModules(): array
     {
-        $modules     = [];
+        $result = [
+            'valid'   => [],
+            'invalid' => [],
+        ];
+
         $modulesPath = $this->config->folderPath;
 
         if (! is_dir($modulesPath)) {
-            return $modules;
+            return $result;
         }
 
         $iterator = new DirectoryIterator($modulesPath);
@@ -44,15 +53,16 @@ class ModuleScanner
             try {
                 $moduleData = $this->scanModule($folderName);
                 if ($moduleData !== null) {
-                    $modules[] = $moduleData;
+                    $result['valid'][] = $moduleData;
                 }
             } catch (ModuleException $e) {
-                // Log invalid modules but continue scanning
+                // Track invalid modules for reporting
+                $result['invalid'][$folderName] = $e->getMessage();
                 log_message('warning', "Invalid module '{$folderName}': " . $e->getMessage());
             }
         }
 
-        return $modules;
+        return $result;
     }
 
     public function scanModule(string $folderName): ?array
@@ -161,7 +171,7 @@ class ModuleScanner
 
         // Check if folder exists
         if (! is_dir($modulePath)) {
-            $errors[] = "Module folder does not exist: {$folderName}";
+            $errors[] = lang('ModuleManager.moduleFolderNotFound');
 
             return $errors;
         }
@@ -169,7 +179,7 @@ class ModuleScanner
         // Check if src/ folder exists (required for modern structure)
         $srcPath = $modulePath . DIRECTORY_SEPARATOR . 'src';
         if (! is_dir($srcPath)) {
-            $errors[] = "Module must have 'src' folder: {$folderName}";
+            $errors[] = lang('ModuleManager.moduleMustHaveSrcFolder', [$folderName]);
 
             return $errors;
         }
@@ -177,7 +187,7 @@ class ModuleScanner
         // Check if Module.php exists in src/
         $moduleFilePath = $srcPath . DIRECTORY_SEPARATOR . 'Module.php';
         if (! file_exists($moduleFilePath)) {
-            $errors[] = "Module.php file is missing in: {$folderName}/src/";
+            $errors[] = lang('ModuleManager.moduleFileNotFound', [$folderName]);
 
             return $errors;
         }

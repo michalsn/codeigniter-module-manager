@@ -45,12 +45,10 @@ final class ModuleAutoloadTest extends CLITestCase
         CITestStreamFilter::registration();
         CITestStreamFilter::addOutputFilter();
 
-        // Scan, install and enable a module
         command('module:scan');
         command('module:install posts');
         command('module:enable posts');
 
-        // Now regenerate autoload
         command('module:autoload');
         $output = $this->parseOutput(CITestStreamFilter::$buffer);
 
@@ -58,7 +56,6 @@ final class ModuleAutoloadTest extends CLITestCase
 
         $this->assertStringContainsString('regenerated successfully', $output);
 
-        // Verify the autoload file exists and contains the module
         $autoloadPath = WRITEPATH . 'modules_psr4.php';
         $this->assertFileExists($autoloadPath);
 

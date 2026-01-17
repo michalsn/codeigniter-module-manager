@@ -25,15 +25,16 @@ class ModuleManager
 
     public function scanAndSyncModules(): array
     {
-        $scannedModules = $this->scanner->scanForModules();
-        $syncResults    = [
+        $scanResult  = $this->scanner->scanForModules();
+        $syncResults = [
             'synced'  => [],
             'failed'  => [],
+            'invalid' => $scanResult['invalid'],
             'removed' => [],
         ];
 
         // Sync found modules
-        foreach ($scannedModules as $moduleData) {
+        foreach ($scanResult['valid'] as $moduleData) {
             $result     = $this->moduleModel->upsertByFolderName($moduleData);
             $folderName = $moduleData['folder_name'];
 
@@ -49,7 +50,7 @@ class ModuleManager
         }
 
         // Remove orphaned modules (in DB but folder doesn't exist)
-        $scannedFolders = array_column($scannedModules, 'folder_name');
+        $scannedFolders = array_column($scanResult['valid'], 'folder_name');
         $allDbModules   = $this->moduleModel->findAll();
 
         foreach ($allDbModules as $dbModule) {

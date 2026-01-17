@@ -32,7 +32,8 @@ return [
     'failedToUpdateVersionInDatabase'   => 'Failed to update module version in database',
 
     // Scanner/Structure
-    'moduleMustHaveSrcFolder'    => 'Module must have \'src\' folder: {0}',
+    'moduleFolderNotFound'       => 'Module folder does not exist',
+    'moduleMustHaveSrcFolder'    => 'Module must have \'src\' folder in: {0}/',
     'moduleFileNotFound'         => 'Module file \'Module.php\' not found in: {0}/src/',
     'noNamespaceFound'           => 'No namespace found in module file: {0}/Module.php',
     'moduleClassNotFound'        => 'Module class \'{0}\' not found in: {1}/Module.php',

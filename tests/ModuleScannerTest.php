@@ -27,21 +27,23 @@ final class ModuleScannerTest extends TestCase
 
     public function testScanForModulesReturnsArray(): void
     {
-        $modules = $this->scanner->scanForModules();
+        $result = $this->scanner->scanForModules();
 
-        $this->assertNotEmpty($modules);
+        $this->assertArrayHasKey('valid', $result);
+        $this->assertArrayHasKey('invalid', $result);
+        $this->assertNotEmpty($result['valid']);
     }
 
     public function testScanForModulesFindsValidModule(): void
     {
-        $modules = $this->scanner->scanForModules();
+        $result = $this->scanner->scanForModules();
 
-        $this->assertNotEmpty($modules);
+        $this->assertNotEmpty($result['valid']);
 
         // Should find the 'posts' test module
         $found = false;
 
-        foreach ($modules as $module) {
+        foreach ($result['valid'] as $module) {
             if ($module['folder_name'] === 'posts') {
                 $found = true;
                 break;
@@ -217,7 +219,8 @@ final class ModuleScannerTest extends TestCase
             $errors = $this->scanner->validateModuleStructure('temp-module');
 
             $this->assertNotEmpty($errors);
-            $this->assertStringContainsString('Module.php file is missing', (string) $errors[0]);
+            $this->assertStringContainsString('Module.php', (string) $errors[0]);
+            $this->assertStringContainsString('not found', (string) $errors[0]);
         } finally {
             rmdir($srcPath);
             rmdir($tempModulePath);
@@ -238,19 +241,23 @@ final class ModuleScannerTest extends TestCase
         $this->assertNull($namespace);
     }
 
-    public function testScanForModulesSkipsInvalidModules(): void
+    public function testScanForModulesTracksInvalidModules(): void
     {
-        // Create an invalid module
+        // Create an invalid module (missing src/ folder)
         $tempModulePath = $this->config->folderPath . '/invalid-module';
         mkdir($tempModulePath, 0755, true);
 
         try {
-            $modules = $this->scanner->scanForModules();
+            $result = $this->scanner->scanForModules();
 
-            // Invalid module should not be in results
-            foreach ($modules as $module) {
+            // Invalid module should not be in valid results
+            foreach ($result['valid'] as $module) {
                 $this->assertNotSame('invalid-module', $module['folder_name']);
             }
+
+            // Invalid module should be tracked in invalid array
+            $this->assertArrayHasKey('invalid-module', $result['invalid']);
+            $this->assertStringContainsString("must have 'src' folder", $result['invalid']['invalid-module']);
         } finally {
             rmdir($tempModulePath);
         }
@@ -258,13 +265,17 @@ final class ModuleScannerTest extends TestCase
 
     public function testScanForModulesIgnoresDotDirectories(): void
     {
-        $modules = $this->scanner->scanForModules();
+        $result = $this->scanner->scanForModules();
 
-        // Should not include . or .. directories
-        foreach ($modules as $module) {
+        // Should not include . or .. directories in valid modules
+        foreach ($result['valid'] as $module) {
             $this->assertNotSame('.', $module['folder_name']);
             $this->assertNotSame('..', $module['folder_name']);
         }
+
+        // Should not include . or .. directories in invalid modules
+        $this->assertArrayNotHasKey('.', $result['invalid']);
+        $this->assertArrayNotHasKey('..', $result['invalid']);
     }
 
     public function testScanForModulesReturnsEmptyArrayWhenModulePathDoesNotExist(): void
@@ -273,8 +284,11 @@ final class ModuleScannerTest extends TestCase
         $config->folderPath = '/nonexistent/path';
         $scanner            = new ModuleScanner($config);
 
-        $modules = $scanner->scanForModules();
+        $result = $scanner->scanForModules();
 
-        $this->assertEmpty($modules);
+        $this->assertArrayHasKey('valid', $result);
+        $this->assertArrayHasKey('invalid', $result);
+        $this->assertEmpty($result['valid']);
+        $this->assertEmpty($result['invalid']);
     }
 }

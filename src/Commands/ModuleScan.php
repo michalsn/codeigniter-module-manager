@@ -22,6 +22,7 @@ class ModuleScan extends BaseModuleCommand
 
         $syncedCount  = count($results['synced']);
         $failedCount  = count($results['failed']);
+        $invalidCount = count($results['invalid']);
         $removedCount = count($results['removed']);
 
         // Show synced modules
@@ -31,12 +32,21 @@ class ModuleScan extends BaseModuleCommand
             CLI::write("  {$moduleName}: OK", 'green');
         }
 
-        // Show failed modules
+        // Show failed modules (database sync failures)
         if ($failedCount > 0) {
             CLI::write("\n{$failedCount} modules failed to sync:", 'red');
 
             foreach ($results['failed'] as $moduleName => $success) {
                 CLI::write("  {$moduleName}: FAILED", 'red');
+            }
+        }
+
+        // Show invalid modules (validation failures)
+        if ($invalidCount > 0) {
+            CLI::write("\n{$invalidCount} invalid modules found:", 'red');
+
+            foreach ($results['invalid'] as $folderName => $errorMessage) {
+                CLI::write("  {$folderName}: {$errorMessage}", 'red');
             }
         }
 
