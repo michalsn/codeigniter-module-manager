@@ -6,6 +6,7 @@ namespace Michalsn\CodeIgniterModuleManager\Commands;
 
 use CodeIgniter\CLI\BaseCommand;
 use CodeIgniter\CLI\CLI;
+use CodeIgniter\Database\Exceptions\DatabaseException;
 use Michalsn\CodeIgniterModuleManager\Entities\Module;
 use Michalsn\CodeIgniterModuleManager\Services\ModuleManager;
 use Michalsn\CodeIgniterModuleManager\Services\ModuleRegistry;
@@ -44,7 +45,30 @@ abstract class BaseModuleCommand extends BaseCommand
      */
     protected function initializeServices(): void
     {
+        $this->ensureMigrationsRan();
+
         $this->moduleManager  = service('moduleManager');
         $this->moduleRegistry = service('moduleRegistry');
+    }
+
+    /**
+     * Check if the modules table exists (migrations were run)
+     */
+    protected function ensureMigrationsRan(): void
+    {
+        $db = db_connect();
+
+        try {
+            $tableExists = $db->tableExists('modules');
+        } catch (DatabaseException) {
+            $tableExists = false;
+        }
+
+        if (! $tableExists) {
+            CLI::error('The modules table does not exist.');
+            CLI::error('Please run migrations first: php spark migrate --all', 'yellow');
+
+            exit(EXIT_ERROR);
+        }
     }
 }
