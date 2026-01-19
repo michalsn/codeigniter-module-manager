@@ -28,7 +28,7 @@ class ModulePublish extends BaseCommand
         } catch (Throwable $e) {
             $this->showError($e);
 
-            return;
+            return EXIT_ERROR;
         }
 
         // Update published config file
@@ -47,17 +47,17 @@ class ModulePublish extends BaseCommand
         CLI::newLine();
 
         // Modify Autoload.php to add constructor
-        $this->modifyAutoload();
+        return $this->modifyAutoload() ? EXIT_SUCCESS : EXIT_ERROR;
     }
 
-    private function modifyAutoload(): void
+    private function modifyAutoload(): bool
     {
         $autoloadFile = APPPATH . 'Config/Autoload.php';
 
         if (! file_exists($autoloadFile)) {
             CLI::error('Autoload.php file not found at: ' . $autoloadFile);
 
-            return;
+            return false;
         }
 
         $contents = file_get_contents($autoloadFile);
@@ -66,7 +66,7 @@ class ModulePublish extends BaseCommand
         if (str_contains($contents, 'public function __construct()')) {
             CLI::write(CLI::color('  Autoload Already Modified! ', 'yellow') . 'Constructor already exists in Autoload.php');
 
-            return;
+            return true;
         }
 
         // Find the class definition and add constructor after it
@@ -101,10 +101,14 @@ class ModulePublish extends BaseCommand
             file_put_contents($autoloadFile, $contents);
 
             CLI::write(CLI::color('  Autoload Modified! ', 'green') . 'Constructor added to load enabled modules automatically.');
-        } else {
-            CLI::error('Could not find the right place to insert constructor in Autoload.php');
-            CLI::write('Please manually add the constructor to Config\\Autoload.php class:', 'yellow');
-            CLI::write($constructorCode);
+
+            return true;
         }
+
+        CLI::error('Could not find the right place to insert constructor in Autoload.php');
+        CLI::write('Please manually add the constructor to Config\\Autoload.php class:', 'yellow');
+        CLI::write($constructorCode);
+
+        return false;
     }
 }
