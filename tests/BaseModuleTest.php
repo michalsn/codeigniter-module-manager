@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests;
 
-use Exception;
 use Michalsn\CodeIgniterModuleManager\BaseModule;
+use Michalsn\CodeIgniterModuleManager\Exceptions\ModuleException;
 use Tests\Support\Modules\Posts\Module as PostsModule;
 use Tests\Support\TestCase;
 
@@ -177,10 +177,11 @@ final class BaseModuleTest extends TestCase
 
     public function testConstructorThrowsExceptionForMissingName(): void
     {
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage('Required module properties not properly defined');
+        $this->expectException(ModuleException::class);
+        $this->expectExceptionMessage("Module property 'name' is required but not defined");
 
         new class () extends BaseModule {
+            protected string $name        = '';
             protected string $description = 'Test';
             protected string $version     = '1.0.0';
             protected string $author      = 'Test';
@@ -189,37 +190,53 @@ final class BaseModuleTest extends TestCase
 
     public function testConstructorThrowsExceptionForMissingDescription(): void
     {
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage('Required module properties not properly defined');
+        $this->expectException(ModuleException::class);
+        $this->expectExceptionMessage("Module property 'description' is required but not defined");
 
         new class () extends BaseModule {
-            protected string $name    = 'Test';
-            protected string $version = '1.0.0';
-            protected string $author  = 'Test';
+            protected string $name        = 'Test';
+            protected string $description = '';
+            protected string $version     = '1.0.0';
+            protected string $author      = 'Test';
         };
     }
 
     public function testConstructorThrowsExceptionForMissingVersion(): void
     {
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage('Required module properties not properly defined');
+        $this->expectException(ModuleException::class);
+        $this->expectExceptionMessage("Module property 'version' is required but not defined");
 
         new class () extends BaseModule {
             protected string $name        = 'Test';
             protected string $description = 'Test';
+            protected string $version     = '';
             protected string $author      = 'Test';
         };
     }
 
     public function testConstructorThrowsExceptionForMissingAuthor(): void
     {
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage('Required module properties not properly defined');
+        $this->expectException(ModuleException::class);
+        $this->expectExceptionMessage("Module property 'author' is required but not defined");
 
         new class () extends BaseModule {
             protected string $name        = 'Test';
             protected string $description = 'Test';
             protected string $version     = '1.0.0';
+            protected string $author      = '';
+        };
+    }
+
+    public function testConstructorThrowsExceptionForInvalidVersionFormat(): void
+    {
+        $this->expectException(ModuleException::class);
+        $this->expectExceptionMessage("Module property 'version' must be a valid semantic version (e.g., 1.0.0)");
+
+        new class () extends BaseModule {
+            protected string $name        = 'Test';
+            protected string $description = 'Test';
+            protected string $version     = '1.0';
+            protected string $author      = 'Test';
         };
     }
 

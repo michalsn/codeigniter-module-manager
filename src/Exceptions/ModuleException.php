@@ -148,9 +148,29 @@ final class ModuleException extends RuntimeException
         return new self(lang('ModuleManager.moduleMustExtendBaseModule', [$className]));
     }
 
-    public static function forFailedToInstantiateModule(string $className, string $message): static
+    public static function forModulePropertyNameRequired(): static
     {
-        return new self(lang('ModuleManager.failedToInstantiateModule', [$className, $message]));
+        return new self(lang('ModuleManager.modulePropertyNameRequired'));
+    }
+
+    public static function forModulePropertyDescriptionRequired(): static
+    {
+        return new self(lang('ModuleManager.modulePropertyDescRequired'));
+    }
+
+    public static function forModulePropertyVersionRequired(): static
+    {
+        return new self(lang('ModuleManager.modulePropertyVersionRequired'));
+    }
+
+    public static function forModulePropertyVersionInvalid(): static
+    {
+        return new self(lang('ModuleManager.modulePropertyVersionInvalid'));
+    }
+
+    public static function forModulePropertyAuthorRequired(): static
+    {
+        return new self(lang('ModuleManager.modulePropertyAuthorRequired'));
     }
 
     // Migration Exceptions

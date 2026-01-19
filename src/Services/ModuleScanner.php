@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Michalsn\CodeIgniterModuleManager\Services;
 
 use DirectoryIterator;
-use Exception;
 use Michalsn\CodeIgniterModuleManager\BaseModule;
 use Michalsn\CodeIgniterModuleManager\Config\ModuleManager as ModuleManagerConfig;
 use Michalsn\CodeIgniterModuleManager\Exceptions\ModuleException;
@@ -151,11 +150,7 @@ class ModuleScanner
             throw ModuleException::forModuleClassNotFound($className, $folderName);
         }
 
-        try {
-            $instance = new $className();
-        } catch (Exception $e) {
-            throw ModuleException::forFailedToInstantiateModule($className, $e->getMessage());
-        }
+        $instance = new $className();
 
         if (! $instance instanceof BaseModule) {
             throw ModuleException::forModuleMustExtendBaseModule($className);

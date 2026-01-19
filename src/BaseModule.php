@@ -4,24 +4,40 @@ declare(strict_types=1);
 
 namespace Michalsn\CodeIgniterModuleManager;
 
-use Exception;
+use Michalsn\CodeIgniterModuleManager\Exceptions\ModuleException;
 
 abstract class BaseModule
 {
-    protected string $name;
-    protected string $description;
-    protected string $version;
-    protected string $author;
-    protected ?string $url = null;
+    protected string $name        = '';
+    protected string $description = '';
+    protected string $version     = '';
+    protected string $author      = '';
+    protected ?string $url        = null;
 
     /**
-     * @throws Exception
+     * @throws ModuleException
      */
     public function __construct()
     {
         // Ensure child classes have the required fields
-        if (! isset($this->name) || ($this->name === '' || $this->name === '0') || (! isset($this->description) || ($this->description === '' || $this->description === '0')) || (! isset($this->version) || ($this->version === '' || $this->version === '0')) || (! isset($this->author) || ($this->author === '' || $this->author === '0'))) {
-            throw new Exception('Required module properties not properly defined.');
+        if ($this->name === '') {
+            throw ModuleException::forModulePropertyNameRequired();
+        }
+
+        if ($this->description === '') {
+            throw ModuleException::forModulePropertyDescriptionRequired();
+        }
+
+        if ($this->version === '') {
+            throw ModuleException::forModulePropertyVersionRequired();
+        }
+
+        if (! preg_match('/^\d+\.\d+\.\d+$/', $this->version)) {
+            throw ModuleException::forModulePropertyVersionInvalid();
+        }
+
+        if ($this->author === '') {
+            throw ModuleException::forModulePropertyAuthorRequired();
         }
     }
 
